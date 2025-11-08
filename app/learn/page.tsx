@@ -73,11 +73,11 @@ export default function Learn() {
           className="text-center"
         >
           <h1 className="text-5xl font-bold mb-4">
-            <span className="text-[#00e3b3]">Financial Training</span>{" "}
-            <span className="text-yellow-400">Bot</span>
+            <span className="text-[#00e3b3]">Financial </span>{" "}
+            <span className="text-yellow-400">Training</span>
           </h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto mb-8">
-            Master essential financial skills with our FBT (Financial Bot Training) program.
+            Master essential financial skills with our Financial Training program.
           </p>
           
           {/* Progress Bar */}
@@ -216,7 +216,7 @@ export default function Learn() {
                 Ready to Put Your Knowledge to Work?
               </h3>
               <p className="text-gray-300 mb-6">
-                Start investing in your Pine Bluff community and see your impact grow
+                Start investing in your community and see your impact grow
               </p>
               <div className="flex gap-4 justify-center">
                 <Link 
