@@ -94,7 +94,7 @@ export default function Dashboard() {
             <div className="relative z-10">
               <div className="text-sm text-gray-300 mb-2">Community Impact</div>
               <div className="text-3xl font-bold text-white mb-3">${totalCirculated}</div>
-              <div className="text-xs text-gray-400">Total Circulated</div>
+              <div className="text-xs text-gray-400">Total Invested</div>
             </div>
           </motion.div>
         </motion.div>
