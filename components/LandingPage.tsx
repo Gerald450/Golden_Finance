@@ -59,7 +59,7 @@ export default function LandingPage() {
           transition={{ duration: 1.1, ease: "easeOut" }}
         >
           <span className="text-[#00e3b3]">Grow Local.</span><br />
-          <span className="text-yellow-400">Go Global.</span>
+          <span className="text-yellow-400">Gain Global.</span>
         </motion.h1>
 
         <motion.p

@@ -10,7 +10,7 @@ export default function Dashboard() {
   const lessonsCompleted = 2;
 
   const totalCirculated = 500; // demo number
-  const payouts = 18;          // demo number
+  const payouts = 234;          // demo number
 
   const completionPercentage = (lessonsCompleted / 3) * 100;
 
