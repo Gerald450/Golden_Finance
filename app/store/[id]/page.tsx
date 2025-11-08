@@ -8,10 +8,48 @@ import Navigation from "@/components/Navigation";
 import SVIChart from "@/components/SVIChart";
 import SalesInvestmentChart from "@/components/SalesInvestmentChart";
 import { InsightBubble } from "@/components/InsightBubble";
-import { computeSVI } from "@/lib/svi";
+// import { computeSVI } from "@/lib/svi"; // not needed now; using in-file stable scorer
 
 type SeriesPoint = { date: string; sales: number; marginPct: number; invTurn: number; refundPct: number };
 type StoreDoc = { name: string; sector: string; goal: number; fundedPct: number };
+
+/* -------------------- SVI: stable, monotonic scorer (in-file) -------------------- */
+const clamp01 = (x: number) => Math.max(0, Math.min(1, x));
+function computeSVIStable(series: SeriesPoint[]): number[] {
+  if (!series || series.length === 0) return [];
+  const pts = [...series].sort((a, b) => a.date.localeCompare(b.date));
+
+  const salesArr  = pts.map(p => p.sales);
+  const marginArr = pts.map(p => p.marginPct);
+  const invArr    = pts.map(p => p.invTurn);
+  const refundArr = pts.map(p => p.refundPct);
+
+  const min = (a: number[]) => Math.min(...a);
+  const max = (a: number[]) => Math.max(...a);
+  const eps = 1e-9;
+
+  const sMin = min(salesArr),  sMax = max(salesArr);
+  const mMin = min(marginArr), mMax = max(marginArr);
+  const iMin = min(invArr),    iMax = max(invArr);
+  const rMin = min(refundArr), rMax = max(refundArr);
+
+  // Weights: sales 35%, margin 25%, invTurn 25%, refunds 15% (inverted)
+  const wSales = 0.35, wMargin = 0.25, wInv = 0.25, wRefund = 0.15;
+
+  return pts.map(p => {
+    const s = (p.sales     - sMin) / Math.max(eps, (sMax - sMin));
+    const m = (p.marginPct - mMin) / Math.max(eps, (mMax - mMin));
+    const i = (p.invTurn   - iMin) / Math.max(eps, (iMax - iMin));
+
+    // Lower refunds are better
+    const rRaw = (p.refundPct - rMin) / Math.max(eps, (rMax - rMin));
+    const r = 1 - clamp01(rRaw);
+
+    const sv = wSales * clamp01(s) + wMargin * clamp01(m) + wInv * clamp01(i) + wRefund * r;
+    return Math.round(sv * 1000) / 10; // 0..100, one decimal
+  });
+}
+/* -------------------------------------------------------------------------------- */
 
 const getSectorIcon = (sector: string) => {
   const sectorMap: Record<string, string> = {
@@ -68,9 +106,12 @@ export default function StoreDetail({ params }:{ params: Promise<{ id:string }> 
       const snap = await getDoc(ref);
       if (snap.exists()) setStore(snap.data() as StoreDoc);
     })();
+
     const q = query(collection(db, "stores", id, "series"), orderBy("date"));
     const unsub = onSnapshot(q, (snap) => {
-      const rows = snap.docs.map(d => d.data() as SeriesPoint);
+      const rows = snap.docs
+        .map(d => d.data() as SeriesPoint)
+        .sort((a, b) => a.date.localeCompare(b.date)); // guard: ensure chronological
       setSeries(rows);
     });
     return () => unsub();
@@ -107,10 +148,21 @@ export default function StoreDetail({ params }:{ params: Promise<{ id:string }> 
   );
 
   const colors = getSectorColors(store.sector);
-  const svi = computeSVI(series);
-  const sviData = series.map((p, i) => ({ date: p.date, svi: Number(svi[i].toFixed(1)) }));
+
+  // Use the stable scorer here (keeps chart rising when inputs improve)
+  const svi = computeSVIStable(series);
+
+  const sviData = series.map((p, i) => ({
+    date: p.date,
+    svi: Number(svi[i].toFixed(1))
+  }));
+
   const investedCum = series.map((_, i) => 1000 + i * 10); // demo line
-  const salesInvestData = series.map((p, i) => ({ date: p.date, sales: p.sales, investedCum: investedCum[i] }));
+  const salesInvestData = series.map((p, i) => ({
+    date: p.date,
+    sales: p.sales,
+    investedCum: investedCum[i]
+  }));
   
   const currentSVI = svi[svi.length - 1]?.toFixed(1) || "0.0";
   const latestSales = series[series.length - 1]?.sales || 0;
@@ -192,7 +244,8 @@ export default function StoreDetail({ params }:{ params: Promise<{ id:string }> 
             <div className="absolute top-0 right-0 w-20 h-20 bg-yellow-400/10 rounded-full blur-2xl" />
             <div className="relative z-10">
               <div className="text-sm text-gray-400 mb-1">Profit Margin</div>
-              <div className="text-2xl font-bold text-yellow-400">{latestMargin.toFixed(1)}%</div>
+              {/* FIX: show percentage correctly */}
+              <div className="text-2xl font-bold text-yellow-400">{(latestMargin * 100).toFixed(1)}%</div>
             </div>
           </div>
         </motion.div>
