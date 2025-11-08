@@ -58,8 +58,8 @@ export default function LandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.1, ease: "easeOut" }}
         >
-          <span className="text-[#00e3b3]">Your Money.</span><br />
-          <span className="text-yellow-400">Your Move.</span>
+          <span className="text-[#00e3b3]">Grow Local.</span><br />
+          <span className="text-yellow-400">Go Global.</span>
         </motion.h1>
 
         <motion.p
