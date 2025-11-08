@@ -78,7 +78,7 @@ export default function Dashboard() {
             <div className="relative z-10">
               <div className="text-sm text-yellow-400/80 mb-2">Local Businesses</div>
               <div className="text-3xl font-bold text-yellow-400 mb-3">{supported.length}</div>
-              <div className="text-xs text-gray-300">Actively Supporting</div>
+              <div className="text-xs text-gray-300">Actively Investing</div>
               <Link href="/invest" className="inline-block mt-2 text-xs text-yellow-400 hover:text-yellow-300 transition">
                 Find more →
               </Link>
