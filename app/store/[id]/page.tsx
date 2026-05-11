@@ -8,7 +8,7 @@ import Navigation from "@/components/Navigation";
 import SVIChart from "@/components/SVIChart";
 import SalesInvestmentChart from "@/components/SalesInvestmentChart";
 import { InsightBubble } from "@/components/InsightBubble";
-// import { computeSVI } from "@/lib/svi"; // not needed now; using in-file stable scorer
+// import { computeSVI } from "@/lib/svi";
 
 type SeriesPoint = { date: string; sales: number; marginPct: number; invTurn: number; refundPct: number };
 type StoreDoc = { name: string; sector: string; goal: number; fundedPct: number };
