@@ -234,9 +234,6 @@ npm run dev
 4. **RAG spike:** Chunk public 10-K excerpts or your lesson content → embeddings API → vector DB → show retrieved context in the insight panel.
 5. **Auth story:** Even a minimal Firebase Auth flow proves end-to-end **secure data access**.
 
----
-
-_License: specify your license here (e.g., MIT) if you open-source the repo._
 =======
 # GoldenFinance
 
